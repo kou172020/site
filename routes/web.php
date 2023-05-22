@@ -29,14 +29,12 @@ Auth::routes();
 Route::get('/products', 'ProductController@index')->name('products');
 
 Auth::routes();
-// 本の登録画面の表示
 
 Route::get('/create', [ProductController::class, 'create'])->name('create');
 
 Route::post('/create', [ProductController::class, 'submit'])->name('submit');
 
 Auth::routes();
-// 本の詳細
 Route::get('/show/{id}', [ProductController::class, 'show'])->name('show');
 
 Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('edit');
