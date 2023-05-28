@@ -53,28 +53,21 @@ class ProductController extends Controller
         ]);
     }
 
-    public function submit(Request $request)
+    public function submit(ProductRequest $request)
     {
-        // ディレクトリ名
-        $dir = 'img';
 
-        // アップロードされたファイル名を取得
-        $file_name = $request->file('img')->getClientOriginalName();
+        DB::beginTransaction();
+    
+        try {
 
-        // 取得したファイル名で保存
-        $request->file('img')->storeAs('public/' . $dir, $file_name);
-        
-        $path = 'storage/' . $dir . '/' . $file_name;
+            $model = new Products();
+            $model->submitProduct($request);
+            DB::commit();
 
-
-        Products::create([
-            'product_name' => $request->product_name,
-            'company_id' => $request->company_id,
-            'price' => $request->price,
-            'stock' => $request->stock,
-            'comment' => $request->comment,
-            'img_path' => $path,
-        ]);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back();
+        }
            
          return redirect()->route('create');
 
@@ -102,38 +95,21 @@ class ProductController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(ProductRequest $request, $id)
     {
         $product = Products::find($id);
         $company_list = Companies::all();
 
 
-        $file_name = $request->file('img')->getClientOriginalName();
-
-        // 現在の画像へのパスをセット
-        $path = $product->img_path;
-        if (isset($path)) {
-            // 現在の画像ファイルの削除
-            \Storage::disk('public')->delete($path);
-            // 選択された画像ファイルを保存してパスをセット
-            $request->file('img')->storeAs('public/' . 'img', $file_name);
-
-            $path = 'storage/' . 'img' . '/' . $file_name;
-
-        }else{
-            $request->file('img')->storeAs('public/' . 'img', $file_name);
-            $path = 'storage/' . 'img' . '/' . $file_name;
+        DB::beginTransaction();
+        
+        try {
+            $product->updateProduct($request);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back();
         }
-
-
-        $product->update([  
-            "product_name" => $request->product_name,  
-            "company_id" => $request->company_id,
-            "price" => $request->price,
-            "stock" => $request->stock,
-            "comment" => $request->comment,
-            "img_path" => $path,  
-        ]); 
 
         return redirect()->route('products');
     }
@@ -141,8 +117,19 @@ class ProductController extends Controller
 
     public function delete($id)
     {
-        $product = Products::find($id);
-        $product->delete();
+        DB::beginTransaction();
+
+            try {
+                
+                $product = Products::find($id);
+                $product->delete();
+                DB::commit();
+
+            } catch (\Exception $e) {
+ 
+                DB::rollback();
+                
+            }
 
         return redirect()->route('products');
     }
@@ -150,7 +137,7 @@ class ProductController extends Controller
 
     public function search(Request $request)
     {
-         /* テーブルから全てのレコードを取得する */
+
          $product = Products::query();
 
 
