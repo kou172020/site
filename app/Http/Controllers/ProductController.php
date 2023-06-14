@@ -19,7 +19,14 @@ class ProductController extends Controller
         $products = Products::with('company')->get();
         $company = $request->input('company');
         $keyword = $request->input('keyword');
+        $price_max = $request->input('price_max');
+        $price_min = $request->input('price_min');
+        $stock_max = $request->input('stock_max');
+        $stock_min = $request->input('stock_min');
     
+        $sort_key = $request->input('sort_key'); 
+        $sort_order = $request->input('sort_order');
+
         $query = Products::query();
 
         if(!empty($company)) {
@@ -30,16 +37,44 @@ class ProductController extends Controller
             $query->where('product_name', 'LIKE', "%{$keyword}%");
         }
 
+        if(!empty($price_max)) {
+            $query->where('price', '<=',$price_max );
+        }
+
+        if(!empty($price_min)) {
+            $query->where('price', '>=',$price_min );
+        }
+
+        if(!empty($stock_max)) {
+            $query->where('stock', '<=',$stock_max );
+        }
+
+        if(!empty($stock_max)) {
+            $query->where('stock', '<=',$stock_min );
+        }
+          
+
+
+
         $company_list = Companies::all();
 
         $products = $query->get();
 
-        return view('products', [
-            'products' => $products,
-            'company' => $company,
-            'keyword' => $keyword,
-            'company_list' => $company_list,
-        ]);
+
+        if($request->ajax()) {
+            return response()->json([
+                'view' => view('tbody')->with(compact('products'))->render()
+            ])->header('Content-Type', 'application/json; charset=utf-8');
+        } else {
+            return view('products', [
+                'products' => $products,
+                'company' => $company,
+                'keyword' => $keyword,
+                'sort_key' => $sort_key,
+                'sort_order' => $sort_order,
+                'company_list' => $company_list,
+            ]);
+        }
     }
 
     public function create(Request $request)
@@ -117,7 +152,10 @@ class ProductController extends Controller
 
     public function delete($id)
     {
-        DB::beginTransaction();
+
+        if ($request->ajax()) {
+
+            DB::beginTransaction();
 
             try {
                 
@@ -128,10 +166,15 @@ class ProductController extends Controller
             } catch (\Exception $e) {
  
                 DB::rollback();
-                
+                return response()->json(['message' => '削除に失敗しました。']);
             }
+            
+            return response()->json(['message' => '削除が完了しました。']);
+        
+        } else {
+            return back();
+        }
 
-        return redirect()->route('products');
     }
 
 

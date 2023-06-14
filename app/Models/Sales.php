@@ -6,6 +6,12 @@ use Illuminate\Support\Facades\DB;
 
 class Salees extends Model
 {
+
+    protected $fillable = [
+        'id', 
+        'product_id'
+    ];
+
     public function product()
     {
         return $this->belongsTo('App\Models\Products');

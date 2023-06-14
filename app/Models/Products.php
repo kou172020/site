@@ -39,7 +39,7 @@ class Products extends Model
         $path = 'storage/' . $dir . '/' . $file_name;
 
 
-        DB::table('product')->insert([
+        DB::table('products')->insert([
             'product_name' => $request->product_name,
             'company_id' => $request->company_id,
             'price' => $request->price,
