@@ -34,6 +34,26 @@
                     </label>
                 </div>
 
+                <div>
+                    <label for="">価格
+                    <div>
+                        <input type="number" name="price_min" id="price_min" >
+                        {{ __('～') }}
+                        <input type="number" name="price_max" id="price_max" >
+                    </div>
+                    </label>
+                </div>
+
+                <div>
+                    <label for="">在庫
+                    <div>
+                        <input type="number" name="stock_min" id="stock_min" >
+                        {{ __('～') }}
+                        <input type="number" name="stock_max" id="stock_max" >
+                    </div>
+                    </label>
+                </div>
+
                 
 
                 <div>
@@ -49,17 +69,17 @@
                     <table>
                                 <thead>
                                     <tr>
-                                    <th>ID</th>
-                                    <th>商品名</th>  
-                                    <th>会社名</th>  
-                                    <th>数</th>  
-                                    <th>価格</th>
+                                    <th><a href="#" data-sort-key="id">ID</a> <i class="fas fa-sort"></i></th>
+                                    <th><a href="#" data-sort-key="product_name">商品名</a> <i class="fas fa-sort"></i></th>  
+                                    <th><a href="#" data-sort-key="company_id">会社名</a> <i class="fas fa-sort"></i></th>  
+                                    <th><a href="#" data-sort-key="stock">在庫数</a> <i class="fas fa-sort"></th>  
+                                    <th><a href="#" data-sort-key="price">価格</a> <i class="fas fa-sort"></i></th>
                                     <th>コメント</th>
                                     <th>写真</th>
                                     </tr>
                                 </thead>
                     
-                                <tbody>
+                                <tbody id=product_table>
             
                                     @foreach ($products as $product)
                                     <tr>

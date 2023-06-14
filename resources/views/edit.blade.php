@@ -65,7 +65,7 @@
 
                         <button type="submit" class="btn btn-primary">送信</button>
 
-                        <button type="button" class="btn btn-primary" onclick="history.back();">戻る</button>
+                        <a href="{{ route('products') }}" class="btn btn-primary">戻る</a>
                     
                     </form>
                 </div>
