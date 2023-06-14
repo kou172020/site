@@ -44,3 +44,6 @@ Route::post('/edit/{id}', [ProductController::class, 'update'])->name('update');
 Route::post('/delete/{id}', [ProductController::class, 'delete'])->name('delete');
 
 Route::get('/search', [ProductController::class, 'search'])->name('search');
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
